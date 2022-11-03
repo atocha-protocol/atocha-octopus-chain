@@ -183,7 +183,7 @@ pub mod pallet {
 		ChallengeHasBeenSubmitted,
 		ChallengeNotExists,
 		ChallengeHasBeenDisbanded,
-		NoRightToReward,
+		NoRightToReward, // idx = 9
 		PuzzleNotExist,
 		PuzzleHasBeenSolved,
 		PuzzleStatusErr,

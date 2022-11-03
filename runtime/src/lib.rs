@@ -862,7 +862,7 @@ construct_runtime!(
 		TransactionPayment: pallet_transaction_payment,
 		OctopusAppchain: pallet_octopus_appchain, // must before session
 		OctopusLpos: pallet_octopus_lpos,
-		OctopusUpwardMessages: pallet_octopus_upward_messages,
+		OctopusUpwardMessages: pallet_octopus_upward_messages, // idx = 9
 		OctopusAssets: pallet_assets::<Instance1>,
 		OctopusUniques: pallet_uniques::<Instance1>,
 		Session: pallet_session,
@@ -878,7 +878,7 @@ construct_runtime!(
 		// TemplateModule: pallet_template,
 		// AtochaModule: pallet_atocha::{Pallet, Call, Storage, Event<T>, Config<T>},
 		// AtochaFinance: pallet_atofinance::{Pallet, Call, Storage, Event<T>, Config<T>},
-		AtochaModule: pallet_atocha,
+		AtochaModule: pallet_atocha, // idx =21
 		AtochaFinance: pallet_atofinance,
 		//
 		// Council: pallet_ato_collective::<Instance1>::{Pallet, Call, Storage, Origin<T>, Event<T>, Config<T>},

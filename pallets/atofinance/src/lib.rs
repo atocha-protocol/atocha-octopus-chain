@@ -390,81 +390,82 @@ pub mod pallet {
 	#[pallet::error]
 	#[derive(PartialEq, Eq)]
 	pub enum Error<T> {
-		//
+		// 0
 		BeneficiaryListNotEmpty,
-		//
+		// 1
 		ChallengeAlreadyExists,
-		//
+		// 2
 		ChallengeNotExists,
-		//
+		// 3
 		ChallengeStatusError,
-		//
+		// 4
 		ChallengeDepositTooLow,
-		//
+		// 5
 		DepositAlreadyExists,
-		//
+		// 6
 		DepositNotFound,
-		//
+		// 7
 		EndOfRaising,
-		//
+		// 8
 		EraNotEnded,
-		//
+		// 9
 		ExceededMaximumFeeLimit,
-		//
+		// 10
 		ExchangeListIsEmpty,
-		//
+		// 11
 		ExchangeApplyAlreadyExists,
-		//
+		// 12
 		ExchangeRewardEnded,
-		//
+		// 13
 		InsufficientBalance,
-		//
+		// 14
 		InsufficientPoint,
-		//
+		// 15
 		KickAwaySickExchange,
-		//
+		// 16
 		LastExchangeRewardClearing,
-		//
+		// 17
 		LedgerOwnerNotMatch,
-		//
+		// 18
 		NeedARefundFirst,
-		//
+		// 19
 		NotAnswer,
-		//
+		// 20
 		NotCreator,
-		/// Error names should be descriptive.
+		/// Error names should be descriptive. 21
 		NoneValue,
-		//
+		// 22
 		NotPointToken,
-		//
+		// 23
 		ReserveFailed,
-		//
+		// 24
 		RefundFailed,
-		//
+		// 25
 		PointTokenIncreaseFailure,
-		//
+		// 26
 		PuzzlePeriodError,
-		//
+		// 27
 		PuzzleNotExists,
-		//
+		// 28
 		StakingNotFound,
+		// 29
 		/// Errors should have helpful documentation associated with them.
 		StorageOverflow,
-		//
+		// 30
 		StorageFeesTooHigh,
-		//
+		// 31
 		TicketFeeHasBeenPaid,
-		//
+		// 32
 		TicketFeeNotPaid,
-		//
+		// 33
 		TooFewPoints,
-		//
+		// 34
 		RaisingPeriodExpired,
-		//
+		// 35
 		RewardHasBeenClaimed,
-		//
+		// 36
 		WrongPaymentRatio,
-		//
+		// 37
 		BeneficiaryNotFound,
 	}
 
