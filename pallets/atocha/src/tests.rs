@@ -39,6 +39,7 @@ fn test_create_puzzle() {
 			to_aid(CONST_ORIGIN_IS_CREATOR),
 			puzzle_hash.clone(),
 			answer_hash.clone(),
+			0,
 		);
 
 		// (PuzzleSubjectHash, PuzzleAnswerHash, PuzzleTicket, PuzzleRelationType, PuzzleStatus, u64, u64 )
@@ -76,11 +77,6 @@ fn test_answer_puzzle() {
 	new_test_ext().execute_with(|| {
 		System::set_block_number(5);
 
-		// let puzzle_hash_err_ex_id = to_vec("PUZZLE_TX_ERR_ID");
-		// let puzzle_hash = to_vec("PUZZLE_TX_ID");
-		// let answer_hash = to_vec("ANSWER_HASH_256");
-		// let sha256_answer = make_answer_sha256(answer_hash.clone(), puzzle_hash.clone());
-
 		let puzzle_hash = to_vec("PUZZLE_TX_ID");
 		let answer_plain_txt = to_vec("ANSWER_HASH_256");
 		let answer_plain_txt_err = to_vec("ANSWER_HASH_ERROR_256");
@@ -107,10 +103,23 @@ fn test_answer_puzzle() {
 			to_aid(CONST_ORIGIN_IS_CREATOR),
 			puzzle_hash.clone(),
 			answer_hash.clone(),
+			5,
+		);
+
+		// But not
+		System::set_block_number(6);
+		assert_noop!(
+			// Try to call create answer, but the puzzle not exists.
+			AtochaModule::answer_puzzle(
+				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+				puzzle_hash.clone(),
+				answer_plain_txt.clone(),
+				vec![]
+			),
+			Error::<Test>::SilentPeriodBlocking
 		);
 
 		System::set_block_number(15);
-
 		assert_ok!(AtochaModule::answer_puzzle(
 			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 			puzzle_hash.clone(),
@@ -223,6 +232,7 @@ fn test_take_answer_reward_with_crator() {
 			to_aid(CONST_ORIGIN_IS_CREATOR),
 			puzzle_hash.clone(),
 			answer_hash.clone(),
+			0,
 		);
 
 		// Check puzzle no answers.
@@ -337,6 +347,7 @@ fn test_take_answer_reward_with_other() {
 			to_aid(CONST_ORIGIN_IS_CREATOR),
 			puzzle_hash.clone(),
 			answer_hash.clone(),
+			0,
 		);
 
 		// Check puzzle no answers.
@@ -458,6 +469,7 @@ fn test_challenge_pull_out() {
 			to_aid(CONST_ORIGIN_IS_CREATOR),
 			puzzle_hash.clone(),
 			answer_hash.clone(),
+			0,
 		);
 		let puzzle_content = <PuzzleInfo<Test>>::get(&puzzle_hash).unwrap();
 		assert_eq!(puzzle_content.puzzle_status, PuzzleStatus::PUZZLE_STATUS_IS_SOLVING);
@@ -573,6 +585,7 @@ fn test_take_answer_reward_with_challenge_win() {
 			to_aid(CONST_ORIGIN_IS_CREATOR),
 			puzzle_hash.clone(),
 			answer_hash.clone(),
+			0,
 		);
 
 		// Check puzzle no answers.
@@ -785,6 +798,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 			to_aid(CONST_ORIGIN_IS_CREATOR),
 			puzzle_hash.clone(),
 			answer_hash.clone(),
+			0,
 		);
 
 		// Check puzzle no answers.
@@ -976,6 +990,7 @@ fn test_bug_online_answer_faild_2235 () {
 			to_aid(CONST_ORIGIN_IS_CREATOR),
 			final_puzzle_txid.clone(),
 			final_answer_final_sha256.clone(),
+			0,
 		);
 
 		// Check puzzle no answers.
@@ -1005,91 +1020,6 @@ fn test_bug_online_answer_faild_2235 () {
 
 	});
 }
-
-
-// fn test_issue_challenge_and_take_answer_reward() {
-// 	new_test_ext().execute_with(|| {
-// 		System::set_block_number(5);
-//
-// 		let puzzle_hash = to_vec("PUZZLE_TX_ID");
-// 		let answer_plain_txt = to_vec("ANSWER_HASH_256");
-// 		let answer_plain_txt_err = to_vec("ANSWER_HASH_ERROR_256");
-// 		let answer_hash = make_answer_sha256(answer_plain_txt.clone(), puzzle_hash.clone());
-//
-// 		// Create puzzle hash on the chain.
-// 		handle_create_puzzle(
-// 			to_aid(CONST_ORIGIN_IS_CREATOR),
-// 			puzzle_hash.clone(),
-// 			answer_hash.clone(),
-// 		);
-//
-//
-// 		// Check puzzle no answers.
-// 		let answer_list =
-// 			<PuzzleDirectAnswer<Test>>::iter_prefix(puzzle_hash.clone()).collect::<Vec<_>>(); // ::puzzle_direct_answer(&to_vec("PUZZLE_HASH"));
-// 		assert_eq!(0, answer_list.len());
-//
-// 		let mut puzzle_content = <PuzzleInfo<Test>>::get(&puzzle_hash).unwrap();
-// 		assert_eq!(puzzle_content.puzzle_status, PuzzleStatus::PUZZLE_STATUS_IS_SOLVING);
-//
-// 		// Check puzzle no win answers.
-// 		System::set_block_number(15);
-//
-// 		assert_ok!(AtochaModule::answer_puzzle(
-// 			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
-// 			puzzle_hash.clone(),
-// 			answer_plain_txt_err.clone(),
-// 		));
-//
-// 		let answer_list =
-// 			<PuzzleDirectAnswer<Test>>::iter_prefix(puzzle_hash.clone()).collect::<Vec<_>>(); // ::puzzle_direct_answer(&to_vec("PUZZLE_HASH"));
-// 		assert_eq!(1, answer_list.len());
-//
-// 		let mut puzzle_content = <PuzzleInfo<Test>>::get(&puzzle_hash).unwrap();
-// 		assert_eq!(puzzle_content.puzzle_status, PuzzleStatus::PUZZLE_STATUS_IS_SOLVING);
-//
-// 		// When the puzzle status is solving, issue a challenge for it and you cannot success at the time.
-// 		assert_noop!(
-// 			// Try to call create answer, but the puzzle not exists.
-// 			AtochaModule::issue_challenge(
-// 				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
-// 				puzzle_hash.clone(),
-// 				1000 * DOLLARS
-// 			),
-// 			Error::<Test>::PuzzleNotSolvedChallengeFailed
-// 		);
-//
-// 		// Update sure answer on chain.
-// 		assert_ok!(AtochaModule::answer_puzzle(
-// 			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
-// 			puzzle_hash.clone(),
-// 			answer_plain_txt.clone(),
-// 		));
-//
-// 		assert_ok!(AtochaModule::issue_challenge(
-// 			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
-// 			puzzle_hash.clone(),
-// 			1000 * DOLLARS
-// 		));
-//
-// 		// Check whether the challenge period has expired.
-// 		assert_noop!(
-// 			// Try to call create answer, but the puzzle not exists.
-// 			AtochaModule::take_answer_reward(
-// 				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
-// 				puzzle_hash.clone(),
-// 				1000 * DOLLARS
-// 			),
-// 			Error::<Test>::PuzzleNotSolvedChallengeFailed
-// 		);
-//
-// 		// Check if there are active challenges
-//
-// 		// Now you can receive rewards.
-//
-// 		assert!(false, "not implements");
-// 	});
-// }
 
 #[test]
 fn test_handler_reveal_signed_valid() {

@@ -356,6 +356,7 @@ fn testnet_genesis(
 		im_online: ImOnlineConfig { keys: vec![] },
 		grandpa: GrandpaConfig { authorities: vec![] },
 		octopus_assets: Default::default(),
+		ato_assets: Default::default(),
 		beefy: Default::default(),
 		octopus_appchain: OctopusAppchainConfig {
 			anchor_contract: "atocha.octopus-registry.near".to_string(),

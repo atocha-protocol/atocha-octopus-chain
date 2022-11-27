@@ -125,7 +125,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	//   `spec_version`, and `authoring_version` are the same between Wasm and native.
 	// This value is set to 100 to notify Polkadot-JS App (https://polkadot.js.org/apps) to use
 	//   the compatible custom types.
-	spec_version: 130,
+	spec_version: 133,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -382,7 +382,36 @@ impl pallet_elections_phragmen::Config for Runtime {
 	type WeightInfo = pallet_elections_phragmen::weights::SubstrateWeight<Runtime>;
 }
 
-// --------
+
+
+parameter_types! {
+	pub const BasicDeposit: Balance = 50 * DOLLARS ;       // 258 bytes on-chain
+	pub const FieldDeposit: Balance = 1 * DOLLARS ;        // 66 bytes on-chain
+	pub const SubAccountDeposit: Balance = 1 * DOLLARS;   // 53 bytes on-chain
+	pub const MaxSubAccounts: u32 = 100;
+	pub const MaxAdditionalFields: u32 = 100;
+	pub const MaxRegistrars: u32 = 20;
+}
+
+impl pallet_identity::Config for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+	type BasicDeposit = BasicDeposit;
+	type FieldDeposit = FieldDeposit;
+	type SubAccountDeposit = SubAccountDeposit;
+	type MaxSubAccounts = MaxSubAccounts;
+	type MaxAdditionalFields = MaxAdditionalFields;
+	type MaxRegistrars = MaxRegistrars;
+	type Slashed = Treasury;
+	type ForceOrigin = pallet_ato_collective::EnsureProportionMoreThan<AccountId, CouncilCollective, 1, 2>;
+	type RegistrarOrigin = pallet_ato_collective::EnsureProportionMoreThan<AccountId, CouncilCollective, 1, 2>;
+	type WeightInfo = pallet_identity::weights::SubstrateWeight<Runtime>;
+}
+
+parameter_types! {
+	pub const MinOfSilentPeriod: BlockNumber = 0;
+	pub const MaxOfSilentPeriod: BlockNumber = 5256000; // 1 year
+}
 
 impl pallet_atocha::Config for Runtime {
 	type Event = Event;
@@ -395,6 +424,8 @@ impl pallet_atocha::Config for Runtime {
 	type AtoPointsManage = pallet_atofinance::imps::PointManager<Self>;
 	type WeightInfo = pallet_atocha::weights::SubstrateWeight<Runtime>;
 	type TechOrigin = EnsureRootOrHalfTechnicalCommittee;
+	type MinOfSilentPeriod = MinOfSilentPeriod;
+	type MaxOfSilentPeriod = MaxOfSilentPeriod;
 }
 
 parameter_types! {
@@ -710,6 +741,24 @@ impl pallet_assets::Config<pallet_assets::Instance1> for Runtime {
 	type WeightInfo = pallet_assets::weights::SubstrateWeight<Runtime>;
 }
 
+// For atocha wrap assets
+impl pallet_assets::Config<pallet_assets::Instance2> for Runtime {
+	type Event = Event;
+	type Balance = AssetBalance;
+	type AssetId = AssetId;
+	type Currency = Balances;
+	type ForceOrigin = pallet_ato_collective::EnsureProportionAtLeast<AccountId, TechnicalCollective, 1, 2>;
+	type AssetDeposit = AssetDeposit;
+	type AssetAccountDeposit = ConstU128<DOLLARS>;
+	type MetadataDepositBase = MetadataDepositBase;
+	type MetadataDepositPerByte = MetadataDepositPerByte;
+	type ApprovalDeposit = ApprovalDeposit;
+	type StringLimit = StringLimit;
+	type Freezer = ();
+	type Extra = ();
+	type WeightInfo = pallet_assets::weights::SubstrateWeight<Runtime>;
+}
+
 impl pallet_beefy::Config for Runtime {
 	type BeefyId = BeefyId;
 }
@@ -868,6 +917,7 @@ construct_runtime!(
 		Session: pallet_session,
 		Grandpa: pallet_grandpa,
 		ImOnline: pallet_im_online,
+		Identity: pallet_identity,
 		Offences: pallet_offences,
 		Historical: pallet_session_historical::{Pallet},
 		Mmr: pallet_mmr,
@@ -887,6 +937,7 @@ construct_runtime!(
 		TechnicalCommittee: pallet_ato_collective::<Instance2>,
 		Elections: pallet_elections_phragmen,
 		Treasury:pallet_treasury,
+		AtoAssets: pallet_assets::<Instance2>,
 	}
 );
 

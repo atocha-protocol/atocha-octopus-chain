@@ -83,6 +83,8 @@ parameter_types! {
 	pub const PenaltyOfCP: Perbill = Perbill::from_percent(10);
 	pub const MaxSponsorExplainLen: u32 = 256;
 	pub const MaxAnswerExplainLen: u32 = 1024;
+	pub const MinOfSilentPeriod: BlockNumber = 0;
+	pub const MaxOfSilentPeriod: BlockNumber = 5256000; // 1 year
 }
 
 impl crate::Config for Test {
@@ -104,6 +106,8 @@ impl crate::Config for Test {
 	// type MaxAnswerExplainLen = MaxAnswerExplainLen;
 	type CouncilOrigin = frame_system::EnsureRoot<AccountId>;
 	type TechOrigin = frame_system::EnsureRoot<AccountId>;
+	type MinOfSilentPeriod = MinOfSilentPeriod;
+	type MaxOfSilentPeriod = MaxOfSilentPeriod;
 	type WeightInfo = ();
 }
 
@@ -235,10 +239,7 @@ pub(crate) fn handle_create_puzzle(
 	account_id: AccountId,
 	puzzle_hash: Vec<u8>,
 	answer_hash: Vec<u8>,
-	// answer_signed: Vec<u8>,
-	// answer_nonce: &str,
-	// ticket: PuzzleTicket,
-	// duration: DurationBn,
+	silent_period: BlockNumber,
 ) {
 	let origin = Origin::signed(account_id);
 	// let puzzle_hash = puzzle_hash.as_bytes().to_vec();
@@ -252,7 +253,8 @@ pub(crate) fn handle_create_puzzle(
 		puzzle_hash.clone(),
 		answer_hash.clone(),
 		100 * DOLLARS,
-		puzzle_version.clone()
+		puzzle_version.clone(),
+		silent_period,
 	));
 }
 

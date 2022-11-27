@@ -22,6 +22,7 @@ use pallet_atofinance::traits::IAtoChallenge;
 use pallet_atofinance::types::ChallengeStatus;
 use crate::types::{BalanceOf, ConfigData, PuzzleSubjectHash};
 use crate::types::PuzzleStatus;
+use sp_runtime::traits::Saturating;
 
 mod traits;
 pub mod types;
@@ -117,6 +118,10 @@ pub mod pallet {
 			PerVal = Perbill,
 		>;
 
+		type MinOfSilentPeriod: Get<Self::BlockNumber>;
+
+		type MaxOfSilentPeriod: Get<Self::BlockNumber>;
+
 		type WeightInfo: WeightInfo;
 	}
 
@@ -148,6 +153,15 @@ pub mod pallet {
 		Blake2_128Concat,
 		PuzzleAnswerHash,
 		PuzzleAnswerData<T::AccountId, T::BlockNumber>,
+	>;
+
+	#[pallet::storage]
+	#[pallet::getter(fn silent_period)]
+	pub type SilentPeriod<T: Config> = StorageMap<
+		_,
+		Blake2_128Concat,
+		PuzzleSubjectHash,
+		T::BlockNumber,
 	>;
 
 	#[pallet::event]
@@ -192,6 +206,9 @@ pub mod pallet {
 		PuzzleAlreadyExist,
 		PuzzleNotSolvedChallengeFailed,
 		WrongAnswer,
+		MaxOfSilentPeriodExceeded,
+		MinOfSilentPeriodExceeded,
+		SilentPeriodBlocking,
 	}
 
 	#[pallet::genesis_config]
@@ -354,6 +371,10 @@ pub mod pallet {
 			// Puzzle need exists.
 			ensure!(<PuzzleInfo<T>>::contains_key(&puzzle_hash), Error::<T>::PuzzleNotExist);
 
+			if <SilentPeriod<T>>::contains_key(&puzzle_hash) {
+				ensure!(current_block_number > <SilentPeriod<T>>::get(&puzzle_hash).unwrap(), Error::<T>::SilentPeriodBlocking);
+			}
+
 			// Get puzzle
 			let puzzle_content = <PuzzleInfo<T>>::get(&puzzle_hash).unwrap();
 			ensure!(
@@ -430,10 +451,15 @@ pub mod pallet {
 			answer_hash: PuzzleAnswerHash,
 			#[pallet::compact] amount: BalanceOf<T>,
 			puzzle_version: PuzzleVersion,
+			silent_period: T::BlockNumber,
 		) -> DispatchResultWithPostInfo {
+
 			// check signer
 			let who = ensure_signed(origin)?;
 			ensure!(!<PuzzleInfo<T>>::contains_key(&puzzle_hash), Error::<T>::PuzzleAlreadyExist);
+
+			ensure!(silent_period <= T::MaxOfSilentPeriod::get(), Error::<T>::MaxOfSilentPeriodExceeded);
+			ensure!(silent_period >= T::MinOfSilentPeriod::get(), Error::<T>::MinOfSilentPeriodExceeded);
 
 			//
 			let ato_config = Self::get_ato_config();
@@ -458,6 +484,7 @@ pub mod pallet {
 				puzzle_version,
 			};
 			<PuzzleInfo<T>>::insert(puzzle_hash.clone(), puzzle_content);
+			<SilentPeriod<T>>::insert(puzzle_hash.clone(), current_block_number.saturating_add(silent_period));
 
 			// send event
 			Self::deposit_event(Event::PuzzleCreated{

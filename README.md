@@ -12,3 +12,6 @@ WASM_TARGET_DIRECTORY=`pwd` cargo build --release $*
 
 # Update for mainnet
 * 2022-03-17
+
+# Update for testnet
+* 
