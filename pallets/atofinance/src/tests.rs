@@ -1,9 +1,9 @@
 use crate::traits::*;
 use crate::types::*;
-use crate::{mock::*, Error};
+use crate::{mock::*, Error, AtoPointLedger, AtoPointTotal, AtoFinanceLedger};
 // use frame_support::sp_runtime::sp_std::convert::TryInto;
 use frame_support::sp_runtime::Permill;
-use frame_support::traits::OnInitialize;
+use frame_support::traits::{Len, OnInitialize};
 use frame_support::{
 	assert_err, assert_noop, assert_ok, assert_storage_noop,
 	traits::{
@@ -79,5 +79,73 @@ fn test_Transfer() {
 			Balances::reserve(&ACCOUNT_ID_2, 80000000000000),
 			pallet_balances::Error::<Test>::LiquidityRestrictions
 		);
+	});
+}
+
+#[test]
+fn test_Fix_point_ledger() {
+	new_test_ext().execute_with(|| {
+		AtoPointLedger::<Test>::insert(1, 100);
+		AtoPointLedger::<Test>::insert(2, 200);
+		AtoPointTotal::<Test>::put(300);
+		AtochaPot::fix_point_ledger(Origin::root(), vec![(1,50), (2,100), (3,50)]);
+
+		assert_eq!(AtoPointLedger::<Test>::get(1), 150);
+		assert_eq!(AtoPointLedger::<Test>::get(2), 300);
+		assert_eq!(AtoPointLedger::<Test>::get(3), 50);
+		assert_eq!(AtoPointTotal::<Test>::get(), Some(300 + 50 + 100 + 50));
+	});
+}
+
+#[test]
+fn test_fix_ato_finance_ledger() {
+	new_test_ext().execute_with(|| {
+		AtoFinanceLedger::<Test>::insert("a".as_bytes().to_vec(), PotLedgerData{
+			owner: 1,
+			total: 1000,
+			funds: 1000,
+			sponsor_list: vec![]
+		});
+		AtochaPot::fix_ato_finance_ledger(Origin::root(), vec![
+			("a".as_bytes().to_vec(), PotLedgerData {
+				owner: 1,
+				total: 2000,
+				funds: 2000,
+				sponsor_list: vec![]
+			}),
+			("b".as_bytes().to_vec(), PotLedgerData {
+				owner: 2,
+				total: 3000,
+				funds: 3000,
+				sponsor_list: vec![]
+			}),
+			("c".as_bytes().to_vec(), PotLedgerData {
+				owner: 3,
+				total: 4000,
+				funds: 4000,
+				sponsor_list: vec![]
+			}),
+		]);
+
+		assert_eq!(AtoFinanceLedger::<Test>::iter_keys().count(), 3);
+		assert_eq!(AtoFinanceLedger::<Test>::get("a".as_bytes().to_vec()).unwrap(), PotLedgerData{
+			owner: 1,
+			total: 1000,
+			funds: 1000,
+			sponsor_list: vec![]
+		});
+		assert_eq!(AtoFinanceLedger::<Test>::get("b".as_bytes().to_vec()).unwrap(), PotLedgerData {
+			owner: 2,
+			total: 3000,
+			funds: 3000,
+			sponsor_list: vec![]
+		});
+		assert_eq!(AtoFinanceLedger::<Test>::get("c".as_bytes().to_vec()).unwrap(), PotLedgerData {
+			owner: 3,
+			total: 4000,
+			funds: 4000,
+			sponsor_list: vec![]
+		});
+
 	});
 }

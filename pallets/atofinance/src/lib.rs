@@ -57,6 +57,7 @@ pub mod pallet {
 	use frame_support::traits::{ExistenceRequirement, StorageVersion};
 	use frame_system::pallet_prelude::*;
 	use sp_core::sp_std::vec::Vec;
+	use sp_runtime::traits::{AtLeast32BitUnsigned, Saturating};
 	use atocha_constants::MINUTES;
 	use crate::imps::point_exchange::PointExchange;
 	use crate::imps::PointManager;
@@ -577,6 +578,50 @@ pub mod pallet {
 			});
 			Ok(().into())
 		}
+
+		#[pallet::weight(100)]
+		pub fn fix_point_ledger(
+			origin: OriginFor<T>,
+			point_list: Vec<(T::AccountId, PointToken)>,
+		) -> DispatchResultWithPostInfo {
+			T::CouncilOrigin::ensure_origin(origin)?;
+
+			let mut total_fix_point: PointToken = 0;
+			point_list.iter().any(|(who, pt)| {
+				let old_pt = AtoPointLedger::<T>::get(who);
+				AtoPointLedger::<T>::insert(who, old_pt.saturating_add(pt.clone()) );
+				total_fix_point = total_fix_point.saturating_add(pt.clone());
+				false
+			});
+
+			let total_points = AtoPointTotal::<T>::get().unwrap_or(0);
+			AtoPointTotal::<T>::put(total_points.saturating_add(total_fix_point));
+
+			Ok(().into())
+		}
+
+		#[pallet::weight(100)]
+		pub fn fix_ato_finance_ledger(
+			origin: OriginFor<T>,
+			ledger_list: Vec<(PuzzleSubjectHash, PotLedgerData<
+				<T as frame_system::Config>::AccountId,
+				BalanceOf<T>,
+				<T as frame_system::Config>::BlockNumber,
+			>)>,
+		) -> DispatchResultWithPostInfo {
+			T::CouncilOrigin::ensure_origin(origin)?;
+
+			ledger_list.iter().any(|(puzzle_hash, ledger_data)| {
+				if !AtoFinanceLedger::<T>::contains_key(puzzle_hash) {
+					AtoFinanceLedger::<T>::insert(puzzle_hash, ledger_data.clone())
+				}
+				false
+			});
+
+			Ok(().into())
+		}
+
+
 
 		#[pallet::weight(100)]
 		pub fn mint_points(
