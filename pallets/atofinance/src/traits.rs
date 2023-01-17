@@ -27,6 +27,12 @@ pub trait IPuzzleLedger<AccountId, BalanceOf, PuzzleHash, BlockNumber, DResult> 
 	fn get_pot_ledger ( pid: PuzzleHash ) -> Option<PotLedgerData<AccountId, BalanceOf, BlockNumber>> ;
 }
 
+pub trait IPuzzleAssets<AssetId, AccountId, Amount, DResult, PuzzleHash> {
+	fn append_assets_to_puzzle(pid: PuzzleHash, who: AccountId, asset_id: AssetId, amount: Amount) -> DResult ;
+	fn get_assets_of_puzzle(pid: PuzzleHash) -> Vec<(AssetId, Amount)>;
+	fn puzzle_all_assets_transfer_to(pid: PuzzleHash, who: AccountId) -> DResult;
+}
+
 pub trait IPuzzleReward<AccountId, BalanceOf, PuzzleHash, BlockNumber, DResult> {
 	type PerVal: PerThing;
 	type Imbalance: TryDrop;

@@ -90,20 +90,11 @@ parameter_types! {
 impl crate::Config for Test {
 	type Event = Event;
 	type Currency = <Self as pallet_atofinance::Config>::Currency;
-	// type MinBonusOfPuzzle = MinBonusOfPuzzle;
-	// type ChallengePeriodLength = ChallengePeriodLength;
 	type PuzzleLedger = AtochaPot; // pallet_atofinance::Pallet<Test>;
 	type PuzzleRewardOfToken = pallet_atofinance::imps::TokenReward<Self>;
 	type PuzzleRewardOfPoint = pallet_atofinance::imps::PointReward<Self>;
 	type AtoChallenge = pallet_atofinance::imps::challenge_manager::ChallengeManager<Self>;
 	type AtoPointsManage = pallet_atofinance::imps::PointManager<Self>;
-	// type TaxOfTCR = TaxOfTCR;
-	// type TaxOfTVS = TaxOfTVS;
-	// type TaxOfTVO = TaxOfTVO;
-	// type TaxOfTI = TaxOfTI;
-	// type PenaltyOfCP = PenaltyOfCP;
-	// type MaxSponsorExplainLen = MaxSponsorExplainLen;
-	// type MaxAnswerExplainLen = MaxAnswerExplainLen;
 	type CouncilOrigin = frame_system::EnsureRoot<AccountId>;
 	type TechOrigin = frame_system::EnsureRoot<AccountId>;
 	type MinOfSilentPeriod = MinOfSilentPeriod;
@@ -134,14 +125,10 @@ impl pallet_atofinance::Config for Test {
 	type Event = Event;
 	type PalletId = AresFinancePalletId;
 	type Currency = pallet_balances::Pallet<Self>;
-	// type ExchangeEraLength = ExchangeEraLength; // ::get(); // 10
-	// type ExchangeHistoryDepth = ExchangeHistoryDepth;//::get(); // 3
-	// type ExchangeMaxRewardListSize = ExchangeMaxRewardListSize; //::get(); // 3
 	type SlashHandler = ();
-	// type IssuancePerBlock = IssuancePerBlock;
 	type RewardHandler = ();
-	// type PerEraOfBlockNumber = PerEraOfBlockNumber;
-	// type StorageBaseFee = StorageBaseFee;
+	type AssetBalance = u64;
+	type AssetId = u32;
 }
 
 parameter_types! {

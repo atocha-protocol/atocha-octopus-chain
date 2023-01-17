@@ -748,6 +748,7 @@ impl pallet_assets::Config<pallet_assets::Instance2> for Runtime {
 	type AssetId = AssetId;
 	type Currency = Balances;
 	type ForceOrigin = pallet_ato_collective::EnsureProportionAtLeast<AccountId, TechnicalCollective, 1, 2>;
+	// type ForceOrigin = EnsureRootOrHalfTechnicalCommittee;
 	type AssetDeposit = AssetDeposit;
 	type AssetAccountDeposit = ConstU128<DOLLARS>;
 	type MetadataDepositBase = MetadataDepositBase;

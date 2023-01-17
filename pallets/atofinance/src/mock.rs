@@ -85,6 +85,8 @@ parameter_types! {
 impl crate::imps::challenge_manager::Config for Test {}
 
 impl crate::Config for Test {
+	type AssetId = u32;
+	type AssetBalance = u64;
 	type AtoPropose = ();
 	type CouncilOrigin = frame_system::EnsureRoot<AccountId>;
 	type Currency = pallet_balances::Pallet<Self>;

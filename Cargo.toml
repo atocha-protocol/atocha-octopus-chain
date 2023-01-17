@@ -8,6 +8,7 @@ members = [
     'pallets/atocha',
     'pallets/atofinance',
     'pallets/atocollective',
+    'pallets/ato-nft',
     'runtime',
 ]
 #

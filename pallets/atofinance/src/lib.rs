@@ -52,6 +52,7 @@ pub mod pallet {
 		},
 		weights::Weight,
 	};
+	use frame_support::dispatch::HasCompact;
 	use frame_support::sp_std::convert::TryInto;
 	use frame_support::traits::{ExistenceRequirement, StorageVersion};
 	use frame_system::pallet_prelude::*;
@@ -70,6 +71,24 @@ pub mod pallet {
 		type AtoPropose: IAtoPropose<PuzzleSubjectHash>;
 
 		type CouncilOrigin: EnsureOrigin<Self::Origin>;
+
+		type AssetBalance: Member
+			+ Parameter
+			+ AtLeast32BitUnsigned
+			+ Default
+			+ Copy
+			+ MaybeSerializeDeserialize
+			+ MaxEncodedLen
+			+ TypeInfo;
+
+		type AssetId: Member
+			+ Parameter
+			+ Default
+			+ Copy
+			+ HasCompact
+			+ MaybeSerializeDeserialize
+			+ MaxEncodedLen
+			+ TypeInfo;
 
 		/// The staking balance.
 		type Currency: Currency<Self::AccountId>
@@ -639,6 +658,18 @@ impl StorageInstance for Prefix {
 		"ato"
 	}
 	const STORAGE_PREFIX: &'static str = "atocha";
+}
+
+impl<T: Config> IPuzzleAssets<T::AssetId, &T::AccountId, T::AssetBalance, DispatchResult, &PuzzleSubjectHash> for Pallet<T> {
+	fn append_assets_to_puzzle(pid: &PuzzleSubjectHash, who: &T::AccountId, asset_id: T::AssetId, amount: T::AssetBalance) -> DispatchResult {
+		todo!()
+	}
+	fn get_assets_of_puzzle(pid: &PuzzleSubjectHash) -> Vec<(T::AssetId, T::AssetBalance)> {
+		todo!()
+	}
+	fn puzzle_all_assets_transfer_to(pid: &PuzzleSubjectHash, beneficiary: &T::AccountId) -> DispatchResult {
+		todo!()
+	}
 }
 
 impl<T: Config>

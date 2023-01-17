@@ -49,13 +49,14 @@ pub mod pallet {
 	use frame_support::parameter_types;
 	use crate::types::*;
 	use frame_support::{dispatch::DispatchResultWithPostInfo, dispatch::DispatchResult, pallet_prelude::*};
+	use frame_support::dispatch::HasCompact;
 	// use frame_support::dispatch::Dispatchable;
 	use frame_support::traits::{Currency, LockableCurrency, ReservableCurrency, StorageVersion};
 	use frame_system::pallet_prelude::*;
 	// use hex;
 	use sp_core::sp_std::convert::TryInto;
 	// use sp_runtime::PerThing;
-	use sp_runtime::traits::{CheckedAdd};
+	use sp_runtime::traits::{AtLeast32BitUnsigned, CheckedAdd};
 	use sp_std::vec::Vec;
 	use pallet_atofinance::traits::{*};
 	use pallet_atofinance::types::{ChallengeStatus, PointToken, PuzzleChallengeData};
@@ -100,6 +101,7 @@ pub mod pallet {
 			<Self as frame_system::Config>::BlockNumber,
 			DispatchResult
 		>;
+
 		type PuzzleRewardOfToken: IPuzzleReward<
 			<Self as frame_system::Config>::AccountId,
 			BalanceOf<Self>,
@@ -116,6 +118,32 @@ pub mod pallet {
 			<Self as frame_system::Config>::BlockNumber,
 			DispatchResult,
 			PerVal = Perbill,
+		>;
+
+		type AssetBalance: Member
+			+ Parameter
+			+ AtLeast32BitUnsigned
+			+ Default
+			+ Copy
+			+ MaybeSerializeDeserialize
+			+ MaxEncodedLen
+			+ TypeInfo;
+
+		type AssetId: Member
+			+ Parameter
+			+ Default
+			+ Copy
+			+ HasCompact
+			+ MaybeSerializeDeserialize
+			+ MaxEncodedLen
+			+ TypeInfo;
+
+		type PuzzleAssets: IPuzzleAssets<
+			Self::AssetId,
+			Self::AccountId,
+			Self::AssetBalance,
+			DispatchResult,
+			PuzzleSubjectHash
 		>;
 
 		type MinOfSilentPeriod: Get<Self::BlockNumber>;

@@ -359,6 +359,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "ato-nft"
+version = "1.0.1"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-uniques",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+]
+
+[[package]]
 name = "atocha-constants"
 version = "1.0.0"
 
