@@ -216,17 +216,17 @@ impl<T: Config> IPointExchange<T::AccountId, T::BlockNumber, ExchangeEra, PointT
 	}
 
 	fn check_and_update_era(current_bn: T::BlockNumber) -> Weight {
-		let mut w_read: Weight= 1;
-		let mut w_write: Weight = 0;
+		let mut w_read: Weight= Weight::from_ref_time(1);
+		let mut w_write: Weight = Weight::from_ref_time(0);
 		let current_era = CurrentExchangeRewardEra::<T>::get();
 		if current_era.is_none() {
 			CurrentExchangeRewardEra::<T>::put(1);
 			ExchangeRewardEraStartBn::<T>::insert(1, current_bn);
-			w_write+=2;
+			w_write+=Weight::from_ref_time(2);
 		}else{
 			let current_era = current_era.unwrap();
 			// Get exchange era start bn.
-			w_read+=1;
+			w_read+=Weight::from_ref_time(1);
 
 			if let Some(era_start_bn) = ExchangeRewardEraStartBn::<T>::get(current_era) {
 				let diff_bn = current_bn.saturating_sub(era_start_bn);
@@ -234,7 +234,7 @@ impl<T: Config> IPointExchange<T::AccountId, T::BlockNumber, ExchangeEra, PointT
 					let new_era = current_era.saturating_add(1);
 					CurrentExchangeRewardEra::<T>::put(new_era);
 					ExchangeRewardEraStartBn::<T>::insert(new_era, current_bn);
-					w_write+=2;
+					w_write+=Weight::from_ref_time(2);
 				}
 			}else{
 				ExchangeRewardEraStartBn::<T>::insert(current_era, current_bn);

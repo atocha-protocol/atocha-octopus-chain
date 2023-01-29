@@ -1,5 +1,28 @@
 use appchain_barnacle_runtime::{
-	opaque::Block, opaque::SessionKeys, AccountId, AtochaFinanceConfig, AtochaModuleConfig, BabeConfig, Balance, BalancesConfig, GenesisConfig, GrandpaConfig, ImOnlineConfig, OctopusAppchainConfig, OctopusLposConfig, CouncilConfig, ElectionsConfig, SessionConfig, Signature, SudoConfig, SystemConfig, TechnicalCommitteeConfig, DOLLARS, WASM_BINARY, DAYS};
+	Block,
+	SessionKeys,
+	AtochaFinanceConfig,
+	AtochaModuleConfig,
+	BabeConfig,
+	BalancesConfig,
+	GenesisConfig,
+	GrandpaConfig,
+	ImOnlineConfig,
+	OctopusAppchainConfig,
+	OctopusUpwardMessagesConfig,
+	OctopusBridgeConfig,
+	OctopusLposConfig,
+	CouncilConfig,
+	ElectionsConfig,
+	SessionConfig,
+	SudoConfig,
+	SystemConfig,
+	TechnicalCommitteeConfig,
+	WASM_BINARY
+};
+
+pub use appchain_primitives::{AccountId, Balance, Signature};
+
 use beefy_primitives::crypto::AuthorityId as BeefyId;
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use pallet_octopus_appchain::sr25519::AuthorityId as OctopusId;
@@ -7,7 +30,7 @@ use sc_chain_spec::ChainSpecExtension;
 use sc_service::ChainType;
 use serde::{Deserialize, Serialize};
 use sp_consensus_babe::AuthorityId as BabeId;
-use sp_finality_grandpa::AuthorityId as GrandpaId;
+use grandpa::AuthorityId as GrandpaId;
 use hex_literal::hex;
 use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public};
 use sp_runtime::{
@@ -15,6 +38,19 @@ use sp_runtime::{
 	traits::{IdentifyAccount, Verify},
 	Perbill,
 };
+use appchain_barnacle_runtime::constants::currency::{DOLLARS};
+use appchain_barnacle_runtime::constants::time::DAYS;
+
+fn barnacle_chain_spec_properties() -> serde_json::map::Map<String, serde_json::Value> {
+	serde_json::json!({
+		"ss58Format": 42,
+		"tokenDecimals": 18,
+		"tokenSymbol": "ATO",
+	})
+		.as_object()
+		.expect("Map given; qed")
+		.clone()
+}
 
 // The URL for the telemetry server.
 // const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
@@ -38,11 +74,11 @@ pub struct Extensions {
 pub type ChainSpec = sc_service::GenericChainSpec<GenesisConfig, Extensions>;
 
 pub fn octopus_testnet_config() -> Result<ChainSpec, String> {
-	ChainSpec::from_json_bytes(&include_bytes!("../../resources/atocha-protocol-raw-testnet.json")[..])
+	ChainSpec::from_json_bytes(&include_bytes!("../res/atocha-protocol-raw-testnet.json")[..])
 }
 
 pub fn octopus_mainnet_config() -> Result<ChainSpec, String> {
-	ChainSpec::from_json_bytes(&include_bytes!("../../resources/atocha-protocol-raw-mainnet.json")[..])
+	ChainSpec::from_json_bytes(&include_bytes!("../res/atocha-protocol-raw-mainnet.json")[..])
 }
 
 fn session_keys(
@@ -129,10 +165,10 @@ pub fn development_config() -> Result<ChainSpec, String> {
 		// Telemetry
 		None,
 		// Protocol ID
-		None,
+		Some("bar"),
 		// Properties
 		None, //Some(properties),
-		None,
+		Some(barnacle_chain_spec_properties()),
 		// Extensions
 		Default::default(),
 	))
@@ -224,10 +260,10 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
 		// Telemetry
 		None,
 		// Protocol ID
-		None,
+		Some("bar"),
 		// Properties
 		None, //Some(properties),
-		None,
+		Some(barnacle_chain_spec_properties()),
 		// Extensions
 		Default::default(),
 	))
@@ -358,12 +394,21 @@ fn testnet_genesis(
 		octopus_assets: Default::default(),
 		ato_assets: Default::default(),
 		beefy: Default::default(),
+		// octopus_appchain: OctopusAppchainConfig {
+		// 	anchor_contract: "atocha.octopus-registry.near".to_string(),
+		// 	asset_id_by_token_id: vec![("usdc.testnet".to_string(), 0)],
+		// 	validators,
+		// 	premined_amount: 1024 * DOLLARS,
+		// },
 		octopus_appchain: OctopusAppchainConfig {
-			anchor_contract: "atocha.octopus-registry.near".to_string(),
-			asset_id_by_token_id: vec![("usdc.testnet".to_string(), 0)],
+			anchor_contract: "octopus-anchor.testnet".to_string(),
 			validators,
-			premined_amount: 1024 * DOLLARS,
 		},
+		octopus_bridge: OctopusBridgeConfig {
+			premined_amount: 1024 * DOLLARS,
+			asset_id_by_token_id: vec![("usdn.testnet".to_string(), 0)],
+		},
+		octopus_upward_messages: OctopusUpwardMessagesConfig { interval: 1 },
 		octopus_lpos: OctopusLposConfig { era_payout: 27397 * DOLLARS, ..Default::default() },
 		technical_committee: TechnicalCommitteeConfig {
 			phantom: Default::default(),

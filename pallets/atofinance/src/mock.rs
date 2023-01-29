@@ -24,6 +24,7 @@ use sp_runtime::{
 use std::collections::HashMap;
 use std::sync::Mutex;
 use frame_support::traits::ConstU32;
+use sp_std::convert::TryFrom;
 
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 type Block = frame_system::mocking::MockBlock<Test>;
@@ -56,8 +57,8 @@ impl system::Config for Test {
 	type BlockWeights = ();
 	type BlockLength = ();
 	type DbWeight = ();
-	type Origin = Origin;
-	type Call = Call;
+	type RuntimeOrigin = RuntimeOrigin;
+	type RuntimeCall = RuntimeCall;
 	type Index = u64;
 	type BlockNumber = u64;
 	type Hash = H256;
@@ -65,7 +66,7 @@ impl system::Config for Test {
 	type AccountId = AccountId;
 	type Lookup = IdentityLookup<Self::AccountId>;
 	type Header = Header;
-	type Event = Event;
+	type RuntimeEvent = RuntimeEvent;
 	type BlockHashCount = BlockHashCount;
 	type Version = ();
 	type PalletInfo = PalletInfo;
@@ -88,7 +89,7 @@ impl crate::Config for Test {
 	type AtoPropose = ();
 	type CouncilOrigin = frame_system::EnsureRoot<AccountId>;
 	type Currency = pallet_balances::Pallet<Self>;
-	type Event = Event;
+	type RuntimeEvent = RuntimeEvent;
 	type PalletId = AresFinancePalletId;
 	type RewardHandler = ();
 	type SlashHandler = ();
@@ -103,7 +104,7 @@ impl pallet_balances::Config for Test {
 	type ReserveIdentifier = [u8; 8];
 	type MaxLocks = MaxLocks;
 	type Balance = Balance;
-	type Event = Event;
+	type RuntimeEvent = RuntimeEvent;
 	type DustRemoval = ();
 	type ExistentialDeposit = ExistentialDeposit;
 	type AccountStore = System;

@@ -3,7 +3,8 @@
 // use codec::Encode;
 pub use pallet::*;
 
-use frame_support::sp_runtime::app_crypto::TryFrom;
+// use frame_support::sp_runtime::app_crypto::TryFrom;
+use sp_std::convert::TryFrom;
 use frame_support::sp_runtime::traits::{IdentifyAccount, Verify};
 use frame_support::sp_runtime::{DispatchResult, MultiSignature};
 use frame_support::sp_runtime::MultiSigner;
@@ -43,18 +44,14 @@ pub use weights::WeightInfo;
 
 #[frame_support::pallet]
 pub mod pallet {
+
 	use super::*;
-	// use atocha_constants::*;
 	use frame_support::sp_runtime::{Perbill};
-	use frame_support::parameter_types;
 	use crate::types::*;
 	use frame_support::{dispatch::DispatchResultWithPostInfo, dispatch::DispatchResult, pallet_prelude::*};
-	// use frame_support::dispatch::Dispatchable;
 	use frame_support::traits::{Currency, LockableCurrency, ReservableCurrency, StorageVersion};
 	use frame_system::pallet_prelude::*;
-	// use hex;
 	use sp_core::sp_std::convert::TryInto;
-	// use sp_runtime::PerThing;
 	use sp_runtime::traits::{CheckedAdd};
 	use sp_std::vec::Vec;
 	use pallet_atofinance::traits::{*};
@@ -65,7 +62,7 @@ pub mod pallet {
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
-		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
 		type AtoChallenge: IAtoChallenge<
 			<Self as frame_system::Config>::AccountId,
@@ -85,9 +82,9 @@ pub mod pallet {
 			DispatchResult
 		>;
 
-		type CouncilOrigin: EnsureOrigin<Self::Origin>;
+		type CouncilOrigin: EnsureOrigin<Self::RuntimeOrigin>;
 
-		type TechOrigin: EnsureOrigin<Self::Origin>;
+		type TechOrigin: EnsureOrigin<Self::RuntimeOrigin>;
 
 		type Currency: Currency<Self::AccountId>
 			+ ReservableCurrency<Self::AccountId>

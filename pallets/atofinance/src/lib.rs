@@ -69,14 +69,14 @@ pub mod pallet {
 
 		type AtoPropose: IAtoPropose<PuzzleSubjectHash>;
 
-		type CouncilOrigin: EnsureOrigin<Self::Origin>;
+		type CouncilOrigin: EnsureOrigin<Self::RuntimeOrigin>;
 
 		/// The staking balance.
 		type Currency: Currency<Self::AccountId>
 			+ ReservableCurrency<Self::AccountId>
 			+ LockableCurrency<Self::AccountId, Moment = Self::BlockNumber>;
 
-		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
 		#[pallet::constant]
 		type PalletId: Get<PalletId>;
@@ -320,7 +320,7 @@ pub mod pallet {
 					"AtoFinance - execute_result = {:?}",
 					&execute_result
 				);
-				result_width += PointExchange::<T>::get_max_reward_list_size() as Weight ;
+				result_width += Weight::from_ref_time(PointExchange::<T>::get_max_reward_list_size() as u64);
 			}
 
 			//
@@ -358,6 +358,7 @@ pub mod pallet {
 		// 	T::DbWeight::get().writes(1)
 		// }
 	}
+
 
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
@@ -580,7 +581,9 @@ pub mod pallet {
 impl<T: Config> Pallet<T> {
 
 	pub fn account_id() -> T::AccountId {
-		T::PalletId::get().into_account()
+		// T::PalletId::get().into_account()
+		// TODO:: 需要测试 T::PalletId::get().into_account()  与 into_account_truncating 等值。
+		T::PalletId::get().into_account_truncating()
 	}
 
 	fn get_ato_config() -> ConfigData<BalanceOf<T>, T::BlockNumber, Perbill> {
@@ -690,6 +693,8 @@ impl<T: Config>
 				}
 			}
 		}
+
+		let _free_balance = T::Currency::free_balance(&who);
 
 		T::Currency::transfer(&who, &Self::account_id(), amount, ExistenceRequirement::KeepAlive)?;
 

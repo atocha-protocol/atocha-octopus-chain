@@ -60,78 +60,78 @@ pub trait WeightInfo {
 pub struct SubstrateWeight<T>(PhantomData<T>);
 impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	fn create_puzzle() -> Weight {
-		(80_123_000 as Weight)
-			.saturating_add(T::DbWeight::get().reads(4 as Weight))
-			.saturating_add(T::DbWeight::get().writes(3 as Weight))
+		Weight::from_ref_time(80_123_000)
+			.saturating_add(T::DbWeight::get().reads(4u64))
+			.saturating_add(T::DbWeight::get().writes(3u64))
 	}
 	fn answer_puzzle() -> Weight {
-		(60_037_000 as Weight)
-			.saturating_add(T::DbWeight::get().reads(3 as Weight))
-			.saturating_add(T::DbWeight::get().writes(1 as Weight))
+		Weight::from_ref_time(60_037_000)
+			.saturating_add(T::DbWeight::get().reads(3u64))
+			.saturating_add(T::DbWeight::get().writes(1u64))
 	}
 	fn additional_sponsorship() -> Weight {
-		(88_850_000 as Weight)
-			.saturating_add(T::DbWeight::get().reads(4 as Weight))
-			.saturating_add(T::DbWeight::get().writes(2 as Weight))
+		Weight::from_ref_time(88_850_000)
+			.saturating_add(T::DbWeight::get().reads(4u64))
+			.saturating_add(T::DbWeight::get().writes(2u64))
 	}
 	fn commit_challenge() -> Weight {
-		(133_628_000 as Weight)
-			.saturating_add(T::DbWeight::get().reads(9 as Weight))
-			.saturating_add(T::DbWeight::get().writes(6 as Weight))
+		Weight::from_ref_time(133_628_000)
+			.saturating_add(T::DbWeight::get().reads(9u64))
+			.saturating_add(T::DbWeight::get().writes(6u64))
 	}
 	fn challenge_pull_out() -> Weight {
-		(114_705_000 as Weight)
-			.saturating_add(T::DbWeight::get().reads(4 as Weight))
-			.saturating_add(T::DbWeight::get().writes(2 as Weight))
+		Weight::from_ref_time(114_705_000)
+			.saturating_add(T::DbWeight::get().reads(4u64))
+			.saturating_add(T::DbWeight::get().writes(2u64))
 	}
 	fn challenge_crowdloan() -> Weight {
-		(107_566_000 as Weight)
-			.saturating_add(T::DbWeight::get().reads(5 as Weight))
-			.saturating_add(T::DbWeight::get().writes(2 as Weight))
+		Weight::from_ref_time(107_566_000)
+			.saturating_add(T::DbWeight::get().reads(5u64))
+			.saturating_add(T::DbWeight::get().writes(2u64))
 	}
 	fn take_answer_reward() -> Weight {
-		(156_600_000 as Weight)
-			.saturating_add(T::DbWeight::get().reads(10 as Weight))
-			.saturating_add(T::DbWeight::get().writes(6 as Weight))
+		Weight::from_ref_time(156_600_000)
+			.saturating_add(T::DbWeight::get().reads(10u64))
+			.saturating_add(T::DbWeight::get().writes(6u64))
 	}
 }
 
 // For backwards compatibility and tests
 impl WeightInfo for () {
 	fn create_puzzle() -> Weight {
-		(80_123_000 as Weight)
-			.saturating_add(RocksDbWeight::get().reads(4 as Weight))
-			.saturating_add(RocksDbWeight::get().writes(3 as Weight))
+		Weight::from_ref_time(80_123_000)
+			.saturating_add(RocksDbWeight::get().reads(4u64))
+			.saturating_add(RocksDbWeight::get().writes(3u64))
 	}
 	fn answer_puzzle() -> Weight {
-		(60_037_000 as Weight)
-			.saturating_add(RocksDbWeight::get().reads(3 as Weight))
-			.saturating_add(RocksDbWeight::get().writes(1 as Weight))
+		Weight::from_ref_time(60_037_000)
+			.saturating_add(RocksDbWeight::get().reads(3u64))
+			.saturating_add(RocksDbWeight::get().writes(1u64))
 	}
 	fn additional_sponsorship() -> Weight {
-		(88_850_000 as Weight)
-			.saturating_add(RocksDbWeight::get().reads(4 as Weight))
-			.saturating_add(RocksDbWeight::get().writes(2 as Weight))
+		Weight::from_ref_time(88_850_000)
+			.saturating_add(RocksDbWeight::get().reads(4u64))
+			.saturating_add(RocksDbWeight::get().writes(2u64))
 	}
 	fn commit_challenge() -> Weight {
-		(133_628_000 as Weight)
-			.saturating_add(RocksDbWeight::get().reads(9 as Weight))
-			.saturating_add(RocksDbWeight::get().writes(6 as Weight))
+		Weight::from_ref_time(133_628_000)
+			.saturating_add(RocksDbWeight::get().reads(9u64))
+			.saturating_add(RocksDbWeight::get().writes(6u64))
 	}
 	fn challenge_pull_out() -> Weight {
-		(114_705_000 as Weight)
-			.saturating_add(RocksDbWeight::get().reads(4 as Weight))
-			.saturating_add(RocksDbWeight::get().writes(2 as Weight))
+		Weight::from_ref_time(114_705_000)
+			.saturating_add(RocksDbWeight::get().reads(4u64))
+			.saturating_add(RocksDbWeight::get().writes(2u64))
 	}
 	fn challenge_crowdloan() -> Weight {
-		(107_566_000 as Weight)
-			.saturating_add(RocksDbWeight::get().reads(5 as Weight))
-			.saturating_add(RocksDbWeight::get().writes(2 as Weight))
+		Weight::from_ref_time(107_566_000)
+			.saturating_add(RocksDbWeight::get().reads(5u64))
+			.saturating_add(RocksDbWeight::get().writes(2u64))
 	}
 	fn take_answer_reward() -> Weight {
-		(156_600_000 as Weight)
-			.saturating_add(RocksDbWeight::get().reads(10 as Weight))
-			.saturating_add(RocksDbWeight::get().writes(6 as Weight))
+		Weight::from_ref_time(156_600_000)
+			.saturating_add(RocksDbWeight::get().reads(10u64))
+			.saturating_add(RocksDbWeight::get().writes(6u64))
 	}
 
 }

@@ -20,7 +20,7 @@ fn handler_create_puzzle<T: Config>(puzzle_hash: PuzzleSubjectHash, answer_hash:
 	let make_balance =  (<T as Config>::Currency::minimum_balance() + config.min_bonus_of_puzzle ) * 2000u32.into() ;
 	let _ = <T as Config>::Currency::make_free_balance_be(&caller, make_balance);
 	let puzzle_version = 1;
-	AtochaModule::<T>::create_puzzle(RawOrigin::Signed(caller).into(), puzzle_hash.clone(), answer_hash, amount, puzzle_version);
+	AtochaModule::<T>::create_puzzle(RawRuntimeOrigin::signed(caller).into(), puzzle_hash.clone(), answer_hash, amount, puzzle_version);
 	assert!(<PuzzleInfo<T>>::contains_key(&puzzle_hash));
 }
 

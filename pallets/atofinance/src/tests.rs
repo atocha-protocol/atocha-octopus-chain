@@ -43,10 +43,10 @@ fn test_PreStorage() {
 		const ACCOUNT_ID_1: u64 = 2;
 		assert_eq!(Balances::free_balance(ACCOUNT_ID_1), 200000000000000);
 		assert_noop!(
-			AtochaPot::pre_storage(Origin::signed(ACCOUNT_ID_1), "STORAGE_HASH".as_bytes().to_vec(), 9000, 9000 ),
+			AtochaPot::pre_storage(RuntimeOrigin::signed(ACCOUNT_ID_1), "STORAGE_HASH".as_bytes().to_vec(), 9000, 9000 ),
 			Error::<Test>::ExceededMaximumFeeLimit,
 		);
-		assert_ok!(AtochaPot::pre_storage(Origin::signed(ACCOUNT_ID_1), "STORAGE_HASH".as_bytes().to_vec(), 9000, 100000000000000 ));
+		assert_ok!(AtochaPot::pre_storage(RuntimeOrigin::signed(ACCOUNT_ID_1), "STORAGE_HASH".as_bytes().to_vec(), 9000, 100000000000000 ));
 
 		assert_eq!(
 			AtochaPot::storage_ledger("STORAGE_HASH".as_bytes().to_vec(), 9000),

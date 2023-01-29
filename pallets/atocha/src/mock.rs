@@ -16,7 +16,8 @@ use crate::types::{BalanceOf, PuzzleVersion};
 use frame_support::assert_ok;
 use frame_support::sp_std::convert::TryInto;
 use frame_support::traits::{ConstU32, GenesisBuild};
-
+use frame_system::Origin;
+use sp_std::convert::TryFrom;
 
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 type Block = frame_system::mocking::MockBlock<Test>;
@@ -51,8 +52,8 @@ impl frame_system::Config for Test {
 	type BlockWeights = ();
 	type BlockLength = ();
 	type DbWeight = ();
-	type Origin = Origin;
-	type Call = Call;
+	type RuntimeOrigin = RuntimeOrigin;
+	type RuntimeCall = RuntimeCall;
 	type Index = u64;
 	type BlockNumber = u64;
 	type Hash = H256;
@@ -60,7 +61,7 @@ impl frame_system::Config for Test {
 	type AccountId = AccountId;
 	type Lookup = IdentityLookup<Self::AccountId>;
 	type Header = Header;
-	type Event = Event;
+	type RuntimeEvent = RuntimeEvent;
 	type BlockHashCount = BlockHashCount;
 	type Version = ();
 	type PalletInfo = PalletInfo;
@@ -88,7 +89,7 @@ parameter_types! {
 }
 
 impl crate::Config for Test {
-	type Event = Event;
+	type RuntimeEvent = RuntimeEvent;
 	type Currency = <Self as pallet_atofinance::Config>::Currency;
 	// type MinBonusOfPuzzle = MinBonusOfPuzzle;
 	// type ChallengePeriodLength = ChallengePeriodLength;
@@ -131,7 +132,7 @@ impl pallet_atofinance::imps::challenge_manager::Config for Test {
 impl pallet_atofinance::Config for Test {
 	type AtoPropose = ();
 	type CouncilOrigin = frame_system::EnsureRoot<AccountId>;
-	type Event = Event;
+	type RuntimeEvent = RuntimeEvent;
 	type PalletId = AresFinancePalletId;
 	type Currency = pallet_balances::Pallet<Self>;
 	// type ExchangeEraLength = ExchangeEraLength; // ::get(); // 10
@@ -153,7 +154,7 @@ impl pallet_balances::Config for Test {
 	type ReserveIdentifier = [u8; 8];
 	type MaxLocks = MaxLocks;
 	type Balance = Balance;
-	type Event = Event;
+	type RuntimeEvent = RuntimeEvent;
 	type DustRemoval = ();
 	type ExistentialDeposit = ExistentialDeposit;
 	type AccountStore = System;
@@ -241,7 +242,7 @@ pub(crate) fn handle_create_puzzle(
 	answer_hash: Vec<u8>,
 	silent_period: BlockNumber,
 ) {
-	let origin = Origin::signed(account_id);
+	let origin = RuntimeOrigin::signed(account_id);
 	// let puzzle_hash = puzzle_hash.as_bytes().to_vec();
 	// let answer_signed = answer_signed;
 	// let answer_nonce = answer_nonce.as_bytes().to_vec();

@@ -10,6 +10,8 @@ use frame_support::{assert_noop, assert_ok};
 use sp_core::hashing::sha2_256;
 use pallet_atofinance::traits::*;
 use sp_runtime::Perbill;
+use frame_system::Origin;
+use sp_std::convert::TryFrom;
 
 use crate::types::*;
 // use sp_core::hexdisplay::HexDisplay;
@@ -90,7 +92,7 @@ fn test_answer_puzzle() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::answer_puzzle(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 				puzzle_hash.clone(),
 				answer_plain_txt.clone(),
 				to_vec("Answer explain"),
@@ -111,7 +113,7 @@ fn test_answer_puzzle() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::answer_puzzle(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 				puzzle_hash.clone(),
 				answer_plain_txt.clone(),
 				vec![]
@@ -121,7 +123,7 @@ fn test_answer_puzzle() {
 
 		System::set_block_number(15);
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 			puzzle_hash.clone(),
 			answer_plain_txt_err.clone(),
 			vec![]
@@ -163,7 +165,7 @@ fn test_answer_puzzle() {
 
 		// ------------
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 			puzzle_hash.clone(),
 			answer_plain_txt.clone(),
 			vec![]
@@ -207,7 +209,7 @@ fn test_answer_puzzle() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::answer_puzzle(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 				puzzle_hash.clone(),
 				answer_plain_txt.clone(),
 				vec![]
@@ -247,7 +249,7 @@ fn test_take_answer_reward_with_crator() {
 		System::set_block_number(15);
 
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 			puzzle_hash.clone(),
 			answer_plain_txt_err.clone(),
 			vec![]
@@ -266,7 +268,7 @@ fn test_take_answer_reward_with_crator() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::PuzzleStatusErr
@@ -274,7 +276,7 @@ fn test_take_answer_reward_with_crator() {
 
 		// Update sure answer on chain.
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
 			puzzle_hash.clone(),
 			answer_plain_txt.clone(),
 			vec![]
@@ -286,7 +288,7 @@ fn test_take_answer_reward_with_crator() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengePeriodIsNotEnd
@@ -297,7 +299,7 @@ fn test_take_answer_reward_with_crator() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengePeriodIsNotEnd
@@ -311,7 +313,7 @@ fn test_take_answer_reward_with_crator() {
 		println!("atopot_balance = {:?}", &atopot_balance_before);
 
 		assert_ok!(AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
 				puzzle_hash.clone(),
 		));
 
@@ -362,7 +364,7 @@ fn test_take_answer_reward_with_other() {
 		System::set_block_number(15);
 
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 			puzzle_hash.clone(),
 			answer_plain_txt_err.clone(),
 			vec![]
@@ -381,7 +383,7 @@ fn test_take_answer_reward_with_other() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::PuzzleStatusErr
@@ -389,7 +391,7 @@ fn test_take_answer_reward_with_other() {
 
 		// Update sure answer on chain.
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 			puzzle_hash.clone(),
 			answer_plain_txt.clone(),
 			vec![]
@@ -401,7 +403,7 @@ fn test_take_answer_reward_with_other() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengePeriodIsNotEnd
@@ -412,7 +414,7 @@ fn test_take_answer_reward_with_other() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengePeriodIsNotEnd
@@ -425,14 +427,14 @@ fn test_take_answer_reward_with_other() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_CREATOR)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::NoRightToReward
 		);
 
 		assert_ok!(AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 		));
 
@@ -478,7 +480,7 @@ fn test_challenge_pull_out() {
 		System::set_block_number(15);
 
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 			puzzle_hash.clone(),
 			answer_plain_txt.clone(),
 			vec![]
@@ -492,7 +494,7 @@ fn test_challenge_pull_out() {
 		assert_eq!(Balances::free_balance(to_aid(CONST_ORIGIN_IS_ANSWER_3)), 4000000000000000);
 		// Challenge puzzle.
 		assert_ok!(AtochaModule::commit_challenge(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
 				puzzle_hash.clone(),
 				10 * DOLLARS
 		));
@@ -502,7 +504,7 @@ fn test_challenge_pull_out() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::BeingChallenged
@@ -512,7 +514,7 @@ fn test_challenge_pull_out() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::challenge_pull_out(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengeCrowdloanPeriodNotEnd
@@ -523,7 +525,7 @@ fn test_challenge_pull_out() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::BeingChallenged
@@ -532,7 +534,7 @@ fn test_challenge_pull_out() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::challenge_pull_out(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengeCrowdloanPeriodNotEnd
@@ -543,7 +545,7 @@ fn test_challenge_pull_out() {
 		assert_ok!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			)
 		);
@@ -552,7 +554,7 @@ fn test_challenge_pull_out() {
 		assert_ok!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::challenge_pull_out(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
 				puzzle_hash.clone(),
 			)
 		);
@@ -561,7 +563,7 @@ fn test_challenge_pull_out() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::challenge_pull_out(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengeHasBeenDisbanded
@@ -600,7 +602,7 @@ fn test_take_answer_reward_with_challenge_win() {
 		System::set_block_number(15);
 
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 			puzzle_hash.clone(),
 			answer_plain_txt_err.clone(),
 			vec![]
@@ -619,7 +621,7 @@ fn test_take_answer_reward_with_challenge_win() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::PuzzleStatusErr
@@ -627,7 +629,7 @@ fn test_take_answer_reward_with_challenge_win() {
 
 		// Update sure answer on chain.
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 			puzzle_hash.clone(),
 			answer_plain_txt.clone(),
 			vec![]
@@ -639,7 +641,7 @@ fn test_take_answer_reward_with_challenge_win() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengePeriodIsNotEnd
@@ -650,7 +652,7 @@ fn test_take_answer_reward_with_challenge_win() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengePeriodIsNotEnd
@@ -660,7 +662,7 @@ fn test_take_answer_reward_with_challenge_win() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::commit_challenge(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
 				puzzle_hash.clone(),
 				10 * DOLLARS
 			),
@@ -674,7 +676,7 @@ fn test_take_answer_reward_with_challenge_win() {
 
 		// --- Be challenged
 		assert_ok!(AtochaModule::commit_challenge(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
 				puzzle_hash.clone(),
 				10 * DOLLARS
 		));
@@ -690,7 +692,7 @@ fn test_take_answer_reward_with_challenge_win() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::BeingChallenged
@@ -701,7 +703,7 @@ fn test_take_answer_reward_with_challenge_win() {
 
 		// Begin raise
 		assert_ok!(AtochaModule::challenge_crowdloan(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_4)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_4)),
 				puzzle_hash.clone(),
 				100 * DOLLARS
 		));
@@ -720,7 +722,7 @@ fn test_take_answer_reward_with_challenge_win() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::BeingChallenged
@@ -745,14 +747,14 @@ fn test_take_answer_reward_with_challenge_win() {
 
 		//
 		assert_ok!(AtochaModule::recognition_challenge (
-				Origin::root(),
+				RuntimeOrigin::root(),
 				puzzle_hash.clone(),
 		));
 
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::PuzzleStatusErr
@@ -813,7 +815,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 		System::set_block_number(15);
 
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 			puzzle_hash.clone(),
 			answer_plain_txt_err.clone(),
 			vec![]
@@ -832,7 +834,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::PuzzleStatusErr
@@ -840,7 +842,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 
 		// Update sure answer on chain.
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 			puzzle_hash.clone(),
 			answer_plain_txt.clone(),
 			vec![]
@@ -852,7 +854,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengePeriodIsNotEnd
@@ -863,7 +865,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::ChallengePeriodIsNotEnd
@@ -873,7 +875,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::commit_challenge(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
 				puzzle_hash.clone(),
 				10 * DOLLARS
 			),
@@ -883,7 +885,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 		System::set_block_number( 15 + 50 + 100 );
 		// --- Be challenged
 		assert_ok!(AtochaModule::commit_challenge(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_3)),
 				puzzle_hash.clone(),
 				10 * DOLLARS
 		));
@@ -896,7 +898,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::BeingChallenged
@@ -904,7 +906,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 
 		// Begin raise
 		assert_ok!(AtochaModule::challenge_crowdloan(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_4)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_4)),
 				puzzle_hash.clone(),
 				100 * DOLLARS
 		));
@@ -920,7 +922,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 		assert_noop!(
 			// Try to call create answer, but the puzzle not exists.
 			AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 			),
 			Error::<Test>::BeingChallenged
@@ -932,7 +934,7 @@ fn test_take_answer_reward_with_challenge_faild() {
 		));
 
 		assert_ok!(AtochaModule::take_answer_reward(
-				Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
+				RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_2)),
 				puzzle_hash.clone(),
 		));
 
@@ -1005,7 +1007,7 @@ fn test_bug_online_answer_faild_2235 () {
 		System::set_block_number(15);
 
 		assert_ok!(AtochaModule::answer_puzzle(
-			Origin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
+			RuntimeOrigin::signed(to_aid(CONST_ORIGIN_IS_ANSWER_1)),
 			final_puzzle_txid.clone(),
 			to_vec("C"),
 			vec![]
@@ -1042,7 +1044,8 @@ fn test_signed_method() {
         use sp_application_crypto::sr25519::Signature;
         use sp_runtime::MultiSignature;
         use sp_runtime::MultiSigner;
-        use frame_support::sp_runtime::app_crypto::{Pair, Ss58Codec, TryFrom};
+        // use frame_support::sp_runtime::app_crypto::{Pair, Ss58Codec, TryFrom};
+		use frame_support::sp_runtime::app_crypto::{Pair, Ss58Codec};
         use frame_support::sp_runtime::traits::{IdentifyAccount, Verify};
         use sp_application_crypto::sr25519::Public;
 
