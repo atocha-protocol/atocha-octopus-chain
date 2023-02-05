@@ -4,7 +4,8 @@ version = '3.0.0-monthly-2021-10'
 description = 'A fresh FRAME-based Substrate runtime, ready for hacking.'
 authors = ['Octopus Network <hi@oct.network>']
 homepage = 'https://oct.network'
-edition = '2018'
+edition = "2021"
+build = "build.rs"
 license = 'Apache-2.0'
 publish = false
 repository = 'https://github.com/octopus-network/barnacle/'
@@ -13,7 +14,8 @@ repository = 'https://github.com/octopus-network/barnacle/'
 targets = ['x86_64-unknown-linux-gnu']
 
 [build-dependencies]
-substrate-wasm-builder = { git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
+substrate-wasm-builder = { version = "5.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
+
 
 [dependencies]
 codec = { package = "parity-scale-codec", version = "3.0.0", default-features = false, features = ["derive", "max-encoded-len"] }
@@ -85,6 +87,7 @@ pallet-octopus-bridge = { git = "https://github.com/octopus-network/octopus-pall
 
 [features]
 default = ['std']
+with-tracing = ["frame-executive/with-tracing"]
 runtime-benchmarks = [
     'pallet-atocha/runtime-benchmarks',
     'frame-benchmarking',

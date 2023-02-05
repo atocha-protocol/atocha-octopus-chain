@@ -81,7 +81,7 @@ pallet-im-online = { version = "4.0.0-dev", default-features = false, git = "htt
 appchain-barnacle-runtime = { path = "../runtime" }
 appchain-rpc = { git = 'https://github.com/octopus-network/barnacle.git', branch = 'release-v0.9.30', default-features = false }
 appchain-primitives = { git = 'https://github.com/octopus-network/barnacle.git', branch = 'release-v0.9.30', default-features = false }
-appchain-executor = { git = 'https://github.com/octopus-network/barnacle.git', branch = 'release-v0.9.30', default-features = false }
+appchain-executor = { path="../executor", default-features = false }
 
 # CLI-specific dependencies
 sc-cli = { optional = true, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30" }
@@ -98,7 +98,7 @@ beefy-gadget = { git = "https://github.com/paritytech/substrate.git", branch = "
 pallet-octopus-appchain = { git = "https://github.com/octopus-network/octopus-pallets.git", branch = "release-v0.9.30" }
 
 [target.'cfg(any(target_arch="x86_64", target_arch="aarch64"))'.dependencies]
-appchain-executor = { git = 'https://github.com/octopus-network/barnacle.git', branch = 'release-v0.9.30', features = ["wasmtime"]}
+appchain-executor = { path="../executor", features = ["wasmtime"]}
 sc-cli = { version = "0.10.0-dev", optional = true, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", features = ["wasmtime"] }
 sc-service = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.30", features = [
 	"wasmtime",
@@ -156,6 +156,7 @@ cli = [
 	"substrate-build-script-utils",
 	"try-runtime-cli",
 ]
+
 runtime-benchmarks = [
 	"appchain-barnacle-runtime/runtime-benchmarks",
 	"frame-benchmarking-cli/runtime-benchmarks"
