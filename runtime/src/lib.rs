@@ -117,7 +117,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	// and set impl_version to 0. If only runtime
 	// implementation changes and behavior does not, then leave spec_version as
 	// is and increment impl_version.
-	spec_version: 134,
+	spec_version: 135,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
@@ -955,12 +955,28 @@ pub type Executive = frame_executive::Executive<
 	frame_system::ChainContext<Runtime>,
 	Runtime,
 	AllPalletsWithSystem,
-	Migrations,
+	(SetIntervalValueRuntimeUpgrade),
 >;
 
 // All migrations executed on runtime upgrade as a nested tuple of types implementing
 // `OnRuntimeUpgrade`.
-type Migrations = ();
+// type Migrations = (
+// 	SetIntervalValueRuntimeUpgrade
+// );
+
+/// Please set the value of interval according to your own needs.
+const INTERVAL: u32 = 1;
+pub struct SetIntervalValueRuntimeUpgrade;
+impl frame_support::traits::OnRuntimeUpgrade for SetIntervalValueRuntimeUpgrade {
+	fn on_runtime_upgrade() -> frame_support::weights::Weight {
+		log::info!(
+				target: "node-runtime",
+				"Kami-debug pallet_octopus_upward_messages",
+			);
+
+		pallet_octopus_upward_messages::migrations::migration_to_v1::<Runtime>(INTERVAL)
+	}
+}
 
 #[cfg(feature = "runtime-benchmarks")]
 #[macro_use]
